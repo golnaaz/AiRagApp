@@ -1,5 +1,7 @@
 # AiRagApp
 
+## WORK IN PROGRESS
+
 A Kotlin Multiplatform app (Android + Desktop) built with Compose Multiplatform that lets you ask questions about a PDF document via an AI RAG backend.
 
 ## Features
