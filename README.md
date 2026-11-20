@@ -12,13 +12,19 @@ A **Kotlin Multiplatform** app that lets you upload a PDF and ask questions abou
 
 | Android | iOS |
 |---------|-----|
-| <img src="docs/screenshots/android.png" width="250" alt="Android screenshot"> | <img src="docs/screenshots/ios.png" width="250" alt="iOS screenshot"> |
+| <img alt="Screenshot_20261120_141855" src="https://github.com/user-attachments/assets/12aba6b6-ea2d-4dda-bc1b-eef5954df443" width="250"> | <img alt="Simulator Screenshot - iPhone 16 - 2026-11-20 at 14 18 47" src="https://github.com/user-attachments/assets/773dc2cb-454f-472d-a1e7-0fb4cc85d04a" width="250"> |
 
 ### Desktop & Web
 
 | Desktop | Web |
 |---------|-----|
-| <img src="docs/screenshots/desktop.png" width="400" alt="Desktop screenshot"> | <img src="docs/screenshots/web.png" width="400" alt="Web screenshot"> |
+| <img src="docs/screenshots/desktop.png" width="400" alt="Desktop screenshot"> | <img alt="Screenshot 2026-11-20 at 14 33 30" src="https://github.com/user-attachments/assets/74485dbf-b54f-450c-8927-485ecd7aea4c"  width="400"> |
+
+https://github.com/user-attachments/assets/ee1ab1ec-f488-45b9-88f8-fe03c96708cd
+
+
+
+https://github.com/user-attachments/assets/f017c84c-4ada-4b97-9b4b-06660d3982d4
 
 <!-- To add a demo video: upload your .mp4 or .mov by dragging it into a GitHub issue comment,
      copy the resulting URL, and paste it here as a bare URL — GitHub will embed it automatically. -->
