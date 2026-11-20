@@ -23,27 +23,34 @@ class ChatViewModel(
     }
 
     fun uploadDocument(fileName: String, bytes: ByteArray) {
-        viewModelScope.launch {
-            _uiState.update { it.copy(isUploading = true, uploadStatus = null) }
-            uploadDocumentUseCase(fileName, bytes)
-                .onSuccess { response ->
-                    _uiState.update {
-                        it.copy(
-                            isUploading = false,
-                            uploadedFileName = response.filename,
-                            docId = response.docId,
-                            uploadStatus = "${response.pagesCount} pages · ${response.chunksCount} chunks indexed"
-                        )
+        try {
+            viewModelScope.launch {
+                _uiState.update { it.copy(isUploading = true, uploadStatus = null) }
+                uploadDocumentUseCase(fileName, bytes)
+                    .onSuccess { response ->
+                        _uiState.update {
+                            it.copy(
+                                isUploading = false,
+                                uploadedFileName = response.filename,
+                                docId = response.docId,
+                                uploadStatus = "${response.pagesCount} pages · ${response.chunksCount} chunks indexed"
+                            )
+                        }
                     }
-                }
-                .onFailure { error ->
-                    _uiState.update {
-                        it.copy(
-                            isUploading = false,
-                            uploadStatus = "Upload failed: ${error.message}"
-                        )
+                    .onFailure { error ->
+                        _uiState.update {
+                            it.copy(
+                                isUploading = false,
+                                uploadStatus = "Upload failed: ${error.message}"
+                            )
+                        }
                     }
-                }
+            }
+        } catch (e: Throwable) {
+            // Catches synchronous failures from viewModelScope itself (e.g. dispatcher issues)
+            _uiState.update {
+                it.copy(isUploading = false, uploadStatus = "VM launch error: ${e.message}")
+            }
         }
     }
 

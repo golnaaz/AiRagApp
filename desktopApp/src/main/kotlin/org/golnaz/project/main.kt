@@ -5,14 +5,14 @@ import androidx.compose.ui.window.application
 import org.golnaz.project.di.appModule
 import org.koin.core.context.startKoin
 
-fun main() = application {
-    startKoin {
-        modules(appModule)
-    }
-    Window(
-        onCloseRequest = ::exitApplication,
-        title = "AiRagApp",
-    ) {
-        App()
+fun main() {
+    startKoin { modules(appModule) }
+    application {
+        Window(
+            onCloseRequest = ::exitApplication,
+            title = "AiRagApp",
+        ) {
+            App()
+        }
     }
 }

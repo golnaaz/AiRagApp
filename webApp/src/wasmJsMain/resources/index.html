@@ -10,6 +10,12 @@
     </style>
 </head>
 <body>
+<!--
+  Hidden file input that FilePicker.wasmjs.kt clicks programmatically.
+  Being pre-existing in the DOM (rather than dynamically created) makes
+  input.click() more reliable across browsers.
+-->
+<input type="file" id="__kmpPdfInput" accept="application/pdf,.pdf" style="display:none">
 <script src="webApp.js"></script>
 </body>
 </html>
