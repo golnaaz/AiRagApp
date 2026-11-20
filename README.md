@@ -1,72 +1,111 @@
 # AiRagApp
 
-## WORK IN PROGRESS
+A **Kotlin Multiplatform** app that lets you upload a PDF and ask questions about it using a RAG (Retrieval-Augmented Generation) AI backend powered by Google Gemini. Runs on Android, iOS, Desktop (JVM), and Web from a single shared codebase.
 
-A Kotlin Multiplatform app (Android + Desktop) built with Compose Multiplatform that lets you ask questions about a PDF document via an AI RAG backend.
+---
+
+## Demo
+
+### Android & iOS
+
+<!-- Add screenshots: drag images onto this page in GitHub editor, then paste the URLs below -->
+
+| Android | iOS |
+|---------|-----|
+| <img src="docs/screenshots/android.png" width="250" alt="Android screenshot"> | <img src="docs/screenshots/ios.png" width="250" alt="iOS screenshot"> |
+
+### Desktop & Web
+
+| Desktop | Web |
+|---------|-----|
+| <img src="docs/screenshots/desktop.png" width="400" alt="Desktop screenshot"> | <img src="docs/screenshots/web.png" width="400" alt="Web screenshot"> |
+
+<!-- To add a demo video: upload your .mp4 or .mov by dragging it into a GitHub issue comment,
+     copy the resulting URL, and paste it here as a bare URL — GitHub will embed it automatically. -->
+
+---
 
 ## Features
 
-- Ask questions in natural language about any PDF
-- Answers powered by Google Gemini via a RAG pipeline
-- Shows source page numbers from the PDF
-- Runs on Android and Desktop from a single shared codebase
+- Upload any PDF directly from the app
+- Ask questions in natural language
+- Answers stream token-by-token via Server-Sent Events
+- Powered by Google Gemini + Qdrant vector search
+- Single Kotlin/Compose codebase for all platforms
+
+## Platforms
+
+| Platform | Target |
+|----------|--------|
+| Android | `androidApp` |
+| iOS | `iosApp` |
+| Desktop (JVM) | `desktopApp` |
+| Web (WasmJs) | `webApp` |
 
 ## Tech Stack
 
-- [Kotlin Multiplatform](https://kotlinlang.org/docs/multiplatform.html)
-- [Compose Multiplatform](https://www.jetbrains.com/lp/compose-multiplatform/)
-- [Ktor](https://ktor.io/) — HTTP client
+- [Kotlin Multiplatform](https://kotlinlang.org/docs/multiplatform.html) + [Compose Multiplatform](https://www.jetbrains.com/lp/compose-multiplatform/)
+- [Ktor](https://ktor.io/) — HTTP client (OkHttp / CIO / Darwin / JS per platform)
+- [Koin](https://insert-koin.io/) — dependency injection
 - [kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization) — JSON
+- [androidx.lifecycle ViewModel](https://developer.android.com/topic/libraries/architecture/viewmodel) — shared ViewModel across platforms
 
 ## Backend
 
-The backend lives in the [`backend/`](./backend) folder — a Python FastAPI server that powers the RAG pipeline.
+The backend is a separate Python FastAPI service:
+[golnaaz/ai-rag-backend](https://github.com/golnaaz/ai-rag-backend)
 
-### How it works
-
-1. On startup it loads `sample.pdf`, splits it into chunks, and stores them as vectors in a local **Qdrant** database
-2. On each request it finds the 3 most relevant chunks via semantic search
-3. Injects them as context into a **Gemini** prompt and streams the answer back token by token over SSE
-
-### Setup
+Start it locally before running any client app:
 
 ```bash
-cd backend
-
-python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
-
-pip install -r requirements.txt
-
-cp .env.example .env
-# Edit .env and set GOOGLE_API_KEY=your_key
-
-cp /path/to/your/file.pdf sample.pdf
-
+cd /path/to/ai-rag-backend
 uvicorn main:app --host 0.0.0.0 --port 8000
 ```
 
-API endpoint: `POST /ask-stream` — streams the answer as Server-Sent Events.
+## Running the Apps
 
-For the Android emulator use `http://10.0.2.2:8000` as the base URL (emulator alias for host machine localhost).
+### Android
+
+```bash
+# Forward port so the emulator can reach localhost:8000
+adb reverse tcp:8000 tcp:8000
+
+./gradlew :androidApp:installDebug
+```
+
+### iOS
+
+Open `iosApp/iosApp.xcodeproj` in Xcode and run on a simulator or device.
+
+> The backend URL for iOS simulator is `http://localhost:8000` (simulator shares the host network).
+
+### Desktop
+
+```bash
+./gradlew :desktopApp:run
+```
+
+### Web
+
+```bash
+./gradlew :webApp:wasmJsBrowserDevelopmentRun
+# Opens at http://localhost:8080
+```
+
+> The backend must be running on the same machine at `http://localhost:8000`.  
+> CORS is enabled on the backend so the browser can reach it.
 
 ## Project Structure
 
 ```
-backend/         → Python FastAPI RAG server
-  main.py        → streaming /ask-stream endpoint
-  rag_service.py → Qdrant vector store + prompt builder
-  schemas.py     → Pydantic request/response models
-shared/          → shared Kotlin code (UI, network, models)
-  data/          → Ktor HTTP client setup
-  model/         → request/response data classes
-  repository/    → API calls
-  ui/            → Compose screens
-androidApp/      → Android entry point
-desktopApp/      → Desktop entry point
+shared/
+  commonMain/        → shared UI (Compose), ViewModel, domain, data layer
+  androidMain/       → Android platform implementations (FilePicker, BaseUrl)
+  iosMain/           → iOS platform implementations
+  jvmMain/           → Desktop platform implementations
+  wasmJsMain/        → Web platform implementations
+androidApp/          → Android entry point + Application class
+iosApp/              → Xcode project
+desktopApp/          → Desktop entry point
+webApp/              → Web entry point (ComposeViewport)
 ```
-
-## Running the apps
-
-- Android: `./gradlew :androidApp:assembleDebug`
-- Desktop: `./gradlew :desktopApp:run`

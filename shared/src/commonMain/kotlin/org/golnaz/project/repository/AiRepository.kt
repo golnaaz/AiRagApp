@@ -1,27 +1,21 @@
 package org.golnaz.project.repository
 
-import org.golnaz.project.data.NetworkClient
-import org.golnaz.project.model.QueryRequest
-import org.golnaz.project.model.RagResponse
-import io.ktor.client.call.*
-import io.ktor.client.request.*
-import io.ktor.http.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import org.golnaz.project.data.DocumentApiDataSource
+import org.golnaz.project.model.StreamEvent
+import org.golnaz.project.model.UploadDocumentResponse
 
-class AiRepository {
-    private val client = NetworkClient.httpClient
+class AiRepository(private val dataSource: DocumentApiDataSource) {
 
-    // Use 10.0.2.2 for Android Emulator, or your local IP/Cloud URL for real devices
-    private val baseUrl = "http://10.0.2.2:8000"
-
-    suspend fun askQuestion(questionText: String): Result<RagResponse> {
-        return try {
-            val response: RagResponse = client.post("$baseUrl/ask") {
-                contentType(ContentType.Application.Json)
-                setBody(QueryRequest(question = questionText))
-            }.body()
-            Result.success(response)
-        } catch (e: Exception) {
-            Result.failure(e)
+    suspend fun uploadDocument(fileName: String, pdfBytes: ByteArray): Result<UploadDocumentResponse> {
+        return runCatching {
+            dataSource.uploadPdf(fileName = fileName, pdfBytes = pdfBytes)
         }
+    }
+
+    fun askQuestionStream(docId: String, question: String): Flow<StreamEvent> {
+        return dataSource.askQuestionStream(docId = docId, question = question)
+            .catch { emit(StreamEvent(type = "error", message = it.message)) }
     }
 }

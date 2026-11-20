@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -19,6 +20,10 @@ kotlin {
         }
     }
     jvm()
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        browser()
+    }
     android {
        namespace = "org.golnaz.project.shared"
        compileSdk = libs.versions.android.compileSdk.get().toInt()
@@ -43,12 +48,17 @@ kotlin {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.compose.uiTooling)
             implementation(libs.ktor.client.okhttp)
+            implementation(libs.androidx.activity.compose)
+            implementation(libs.koin.android)
         }
         jvmMain.dependencies {
             implementation(libs.ktor.client.cio)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
+        }
+        wasmJsMain.dependencies {
+            implementation(libs.ktor.client.js)
         }
         commonMain.dependencies {
             implementation(libs.compose.runtime)
@@ -63,6 +73,8 @@ kotlin {
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.serialization.kotlinx.json)
             implementation(libs.kotlinx.serialization.json)
+            implementation(libs.koin.core)
+            implementation(libs.koin.compose)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
