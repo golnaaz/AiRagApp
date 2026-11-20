@@ -18,9 +18,11 @@ A **Kotlin Multiplatform** app that lets you upload a PDF and ask questions abou
 
 | Desktop | Web |
 |---------|-----|
-| <img src="docs/screenshots/desktop.png" width="400" alt="Desktop screenshot"> | <img alt="Screenshot 2026-11-20 at 14 33 30" src="https://github.com/user-attachments/assets/74485dbf-b54f-450c-8927-485ecd7aea4c"  width="400"> |
+| <img alt="image" src="https://github.com/user-attachments/assets/1c5022ed-9f47-4570-a0b3-d1f272920104" width="400" alt="Desktop screenshot"> | <img alt="Screenshot 2026-11-20 at 15 23 07" src="https://github.com/user-attachments/assets/8ad3681c-96d4-4c5f-8f4f-a5882343407a"  width="400"> |
 
-https://github.com/user-attachments/assets/ee1ab1ec-f488-45b9-88f8-fe03c96708cd
+
+https://github.com/user-attachments/assets/bd080c63-0ca2-40db-bf3e-026a91e7ee01
+
 
 
 
