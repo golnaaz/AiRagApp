@@ -20,17 +20,43 @@ A Kotlin Multiplatform app (Android + Desktop) built with Compose Multiplatform 
 
 ## Backend
 
-This app connects to [ai-rag-backend](https://github.com/golnaaz/ai-rag-backend) — a Python FastAPI server.
+The backend lives in the [`backend/`](./backend) folder — a Python FastAPI server that powers the RAG pipeline.
 
-For Android emulator the base URL is `http://10.0.2.2:8000` (emulator alias for host machine localhost). Start the backend with:
+### How it works
+
+1. On startup it loads `sample.pdf`, splits it into chunks, and stores them as vectors in a local **Qdrant** database
+2. On each request it finds the 3 most relevant chunks via semantic search
+3. Injects them as context into a **Gemini** prompt and streams the answer back token by token over SSE
+
+### Setup
 
 ```bash
+cd backend
+
+python -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
+
+pip install -r requirements.txt
+
+cp .env.example .env
+# Edit .env and set GOOGLE_API_KEY=your_key
+
+cp /path/to/your/file.pdf sample.pdf
+
 uvicorn main:app --host 0.0.0.0 --port 8000
 ```
+
+API endpoint: `POST /ask-stream` — streams the answer as Server-Sent Events.
+
+For the Android emulator use `http://10.0.2.2:8000` as the base URL (emulator alias for host machine localhost).
 
 ## Project Structure
 
 ```
+backend/         → Python FastAPI RAG server
+  main.py        → streaming /ask-stream endpoint
+  rag_service.py → Qdrant vector store + prompt builder
+  schemas.py     → Pydantic request/response models
 shared/          → shared Kotlin code (UI, network, models)
   data/          → Ktor HTTP client setup
   model/         → request/response data classes
