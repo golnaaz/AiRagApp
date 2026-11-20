@@ -1,4 +1,4 @@
-# AiRagApp
+# AI Project
 
 A **Kotlin Multiplatform** app that lets you upload a PDF and ask questions about it using a RAG (Retrieval-Augmented Generation) AI backend powered by Google Gemini. Runs on Android, iOS, Desktop (JVM), and Web from a single shared codebase.
 
